@@ -12,29 +12,20 @@ import os, sys
 import argparse
 import time
 
-parser = argparse.ArgumentParser('Mini ResNet Training')
-parser.add_argument('--epochs', default=50, type=int, help='Number of epochs to train model')
-parser.add_argument('--train-file', default='../data/train_list.mat', type=str, help='Path to train file')
-parser.add_argument('--test-file', default='../data/test_list.mat', type=str, help='Path to test file')
-parser.add_argument('--lr', default=1e-3, type=float, help='Learning rate for optimizer')
-parser.add_argument('--batch-size', default=64, type=int, help='Batch size while training')
-parser.add_argument('--eval', default=0, type=int, help='Set to 1 if model must only be evaluated')
-parser.add_argument('--finetune', default=0, type=int, help='Set to 1 if model must be further trained')
-parser.add_argument('--load-folder', default='', type=str, help='Path to load saved model (required when finetune is 1)')
-parser.add_argument('--foldername', default='test_run', type=str, help='Folder name (will be created if it does not exist) to store model, plots, etc.')
-parser.add_argument('--print-freq', default=50, type=int, help='how often to print model performance per epoch (in terms of iterations)')
-args = parser.parse_args()
-current_path= os.path.realpath('mini_resnet.py')
-os.environ['CURRENT'] = current_path[:current_path.find('mini')]
+def parse_arguments():
+    parser = argparse.ArgumentParser('Mini ResNet Training')
+    parser.add_argument('--epochs', default=50, type=int, help='Number of epochs to train model')
+    parser.add_argument('--train-file', default='../lists/train_list.mat', type=str, help='Path to train file')
+    parser.add_argument('--test-file', default='../lists/test_list.mat', type=str, help='Path to test file')
+    parser.add_argument('--lr', default=1e-3, type=float, help='Learning rate for optimizer')
+    parser.add_argument('--batch-size', default=64, type=int, help='Batch size while training')
+    parser.add_argument('--eval', default=0, type=int, help='Set to 1 if model must only be evaluated')
+    parser.add_argument('--finetune', default=0, type=int, help='Set to 1 if model must be further trained')
+    parser.add_argument('--load-folder', default='', type=str, help='Path to load saved model (required when finetune is 1)')
+    parser.add_argument('--foldername', default='test_run', type=str, help='Folder name (will be created if it does not exist) to store model, plots, etc.')
+    parser.add_argument('--print-freq', default=50, type=int, help='how often to print model performance per epoch (in terms of iterations)')
+    return parser.parse_args()
 
-if not os.isdir(os.path.join(os.environ['CURRENT'], args.foldername)):
-    os.mkdir(os.path.join(os.environ['CURRENT'], args.foldername))
-
-current_folder = os.path.join(os.environ['CURRENT'], args.foldername)
-outfile = open(os.path.join(current_folder, 'output.txt'), 'w')
-
-device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
-print(device)
 class ImageDataset(Dataset):
     def __init__(self, file_name, transforms):
         self.data_file = file_name
@@ -47,6 +38,9 @@ class ImageDataset(Dataset):
         return len(self.input)
 
     def __getitem__(self, idx):
+        print('hello')
+        print(self.input[idx, 0][0])
+        quit()
         input = imageio.imread(self.input[idx, 0][0])
         input = self.transforms(Image.fromarray(input, mode='RGB'))
         label = self.label[idx][0] - 1
@@ -68,7 +62,7 @@ class resBlock(nn.Module):
         return y
 
 class miniResnet(nn.Module):
-    def __init__(self, input_size=3, output_size=32, flat_shape, num_classes):
+    def __init__(self, input_size=3, output_size=32, flat_shape=1000, num_classes=120):
         super(miniResnet, self).__init__()
         self.in_channels = input_size
         self.out_channels = output_size
@@ -106,8 +100,23 @@ class miniResnet(nn.Module):
         return y
 
 
-def main():
+def main(args):
+
+    args = parse_arguments()
+    current_path= os.path.realpath('mini_resnet.py')
+    os.environ['CURRENT'] = current_path[:current_path.find('mini')]
+
+    if not os.path.isdir(os.path.join(os.environ['CURRENT'], args.foldername)):
+        os.mkdir(os.path.join(os.environ['CURRENT'], args.foldername))
+
+    current_folder = os.path.join(os.environ['CURRENT'], args.foldername)
+    outfile = open(os.path.join(current_folder, 'output.txt'), 'w')
+
+    device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
+    print(device)
     # create model
+    print('Enter main')
+    quit()
     model = miniResnet(input_size=3, output_size=32, flat_shape=5000, num_classes=120)
     model.to(device)
     # define criterion and optimizer
@@ -226,3 +235,7 @@ def test(model, criterion, test_loader):
             outfile.write('\n')
 
     return avg_loss/len(test_loader), total_correct/total
+
+if __name__ == '__main___':
+    print('hello')
+    main(sys.argv)
