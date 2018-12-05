@@ -25,6 +25,7 @@ parser.add_argument('--finetune', default=0, type=int, help='Set to 1 if model m
 parser.add_argument('--load-folder', default='', type=str, help='Path to load saved model (required when finetune is 1)')
 parser.add_argument('--foldername', default='test_run', type=str, help='Folder name (will be created if it does not exist) to store model, plots, etc.')
 parser.add_argument('--print-freq', default=50, type=int, help='how often to print model performance per epoch (in terms of iterations)')
+parser.add_argument('--flat-shape', default=15488, type=int, help='Flattened vector dimension')
 args = parser.parse_args()
 
 
@@ -35,7 +36,10 @@ if not os.path.isdir(os.path.join(os.environ['CURRENT'], args.foldername)):
     os.mkdir(os.path.join(os.environ['CURRENT'], args.foldername))
 
 current_folder = os.path.join(os.environ['CURRENT'], args.foldername)
-outfile = open(os.path.join(current_folder, 'output.txt'), 'w')
+if not args.eval:
+    outfile = open(os.path.join(current_folder, 'output.txt'), 'w')
+else:
+    outfile = open(os.path.join(current_folder, 'output_eval.txt'), 'w')
 
 class ImageDataset(Dataset):
     def __init__(self, file_name, transforms):
@@ -94,7 +98,7 @@ class miniResnet(nn.Module):
         self.out_channels = output_size
         self.nclasses = num_classes
         self.flat_shape = flat_shape
-        self.features = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels, kernel_size=7, bias=False),
+        self.conv_features = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels, kernel_size=7, bias=False),
                                       nn.BatchNorm2d(self.out_channels),
                                       nn.LeakyReLU(),
                                       nn.MaxPool2d(3, stride=2),
@@ -105,42 +109,40 @@ class miniResnet(nn.Module):
                                       resBlock(self.out_channels, self.out_channels//2, is_downsample=True),
                                       resBlock(self.out_channels//2, self.out_channels//2),
                                       resBlock(self.out_channels//2, self.out_channels//2),
-                                    #   nn.MaxPool2d(2, stride=2),
+                                      nn.MaxPool2d(3, stride=2),
                                       resBlock(self.out_channels//2, self.out_channels//4, is_downsample=True),
                                       resBlock(self.out_channels//4, self.out_channels//4),
                                       resBlock(self.out_channels//4, self.out_channels//4),
                                       nn.AvgPool2d(7, stride=1))
 
-        self.classifier_1 = nn.Sequential(nn.Linear(self.flat_shape, 512),
+        self.linear_features = nn.Sequential(nn.Linear(self.flat_shape, 512),
                                         nn.Dropout(),
                                         nn.LeakyReLU(), 
-                                        nn.Linear(512, 128))
-        self.classifier_2 = nn.Sequential(nn.LeakyReLU(), 
-                                         nn.Linear(128, self.nclasses))
-        self.classifier_sift = nn.Sequential(nn.LeakyReLU(), 
-                                         nn.Linear(256, self.nclasses))
-        self.classifier_surf = nn.Sequential(nn.LeakyReLU(), 
-                                         nn.Linear(192, self.nclasses))
-
-        self.features.apply(self.init_weight)
-        self.classifier_1.apply(self.init_weight)
-        self.classifier_2.apply(self.init_weight)
-        self.classifier_sift.apply(self.init_weight)
-        self.classifier_surf.apply(self.init_weight)
+                                        )
+        
+        self.classifier = nn.Sequential(nn.Linear(512, 256),
+                                        nn.LeakyReLU(),
+                                        nn.Dropout(),
+                                        nn.Linear(256, self.nclasses))
     
+
+        self.conv_features.apply(self.init_weight)
+        self.linear_features.apply(self.init_weight)
+        self.classifier.apply(self.init_weight)
+         
     def init_weight(self, layer):
         if type(layer) == nn.Conv2d:
             nn.init.xavier_uniform_(layer.weight)
         
         if type(layer) == nn.Linear:
             nn.init.xavier_uniform_(layer.weight)
-            layer.bias.data.fill_(0.01)
+            layer.bias.data.fill_(0.0)
 
     def forward(self, x):
-        features = self.features(x)
-        flat_feat = features.view(features.size(0), -1)
-        y = self.classifier_1(flat_feat)
-        y = self.classifier_2(y)
+        conv_features = self.conv_features(x)
+        flat_feat = conv_features.view(conv_features.size(0), -1)
+        y = self.linear_features(flat_feat)
+        y = self.classifier(y)
         return y
 
 
@@ -148,10 +150,10 @@ def main():
 
     # create model
 
-    model = miniResnet(input_size=3, output_size=128, flat_shape=1152, num_classes=10)
-    if torch.cuda.device_count() > 1:
-        print("Using", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
+    model = miniResnet(input_size=3, output_size=128, flat_shape=args.flat_shape, num_classes=120)
+    # if torch.cuda.device_count() > 1:
+    #     print("Using", torch.cuda.device_count(), "GPUs!")
+    #     model = nn.DataParallel(model)
     model.to(device)
     # define criterion and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
@@ -159,20 +161,20 @@ def main():
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
     # define transformations
 
-    # resize = transforms.Resize((128, 128))
+    resize = transforms.Resize((64, 64))
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
-    normal = transforms.Compose([transforms.ToTensor(),
+    normal = transforms.Compose([resize, transforms.ToTensor(),
                                  normalize])
     # load data
     train_file = args.train_file
     test_file = args.test_file
 
-    # train_data = ImageDataset(file_name=train_file, transforms=normal)
-    # test_data = ImageDataset(file_name=test_file, transforms=normal)
+    train_data = ImageDataset(file_name=train_file, transforms=normal)
+    test_data = ImageDataset(file_name=test_file, transforms=normal)
 
-    train_data = datasets.CIFAR10('../cifar10', train=True, transform=normal, download=True)
-    test_data = datasets.CIFAR10('../cifar10', train=False, transform=normal, download=True)
+    # train_data = datasets.CIFAR10('../cifar10', train=True, transform=normal, download=True)
+    # test_data = datasets.CIFAR10('../cifar10', train=False, transform=normal, download=True)
 
     train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
     test_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=False, num_workers=2)
@@ -191,9 +193,9 @@ def main():
             if acc > best_acc:
                 best_acc = acc
                 checkpoint = {'state_dict': model.state_dict()}
-                torch.save(checkpoint, os.path.join(current_folder, 'model_best.pth.tar'))
+                torch.save(checkpoint, os.path.join(current_folder, 'baseline.pth.tar'))
         if (epoch+1)%3==0:
-            # checkpoint = torch.load(os.path.join(current_folder, 'model_best.pth.tar'))
+            # checkpoint = torch.load(os.path.join(current_folder, 'baseline.pth.tar'))
             # model.load_state_dict(checkpoint['state_dict'])
             test_loss, test_acc = test(model, criterion, test_loader)
             print('Total Test Accuracy: {:.3f}'.format(test_acc))
@@ -203,7 +205,7 @@ def main():
             outfile.write('\n')
         scheduler.step()
 
-    checkpoint = torch.load(os.path.join(current_folder, 'model_best.pth.tar'))
+    checkpoint = torch.load(os.path.join(current_folder, 'baseline.pth.tar'))
     model.load_state_dict(checkpoint['state_dict'])
     test_loss, test_acc = test(model, criterion, test_loader)
     print('Total Test Accuracy: {:.3f}'.format(test_acc))

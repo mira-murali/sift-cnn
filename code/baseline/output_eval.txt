@@ -1,0 +1,34 @@
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.091Total Test Loss:2.306 
+Testing: 
+Total Test Accuracy: 0.806Total Test Loss:0.884 
