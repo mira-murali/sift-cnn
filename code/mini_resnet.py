@@ -59,61 +59,76 @@ class ImageDataset(Dataset):
         return input, label
 
 class resBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, is_downsample=False):
+    def __init__(self, in_channels, out_channels, stride=1, is_downsample=False):
         super(resBlock, self).__init__()
+        self.expansion = 4
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.is_downsample = is_downsample
-        self.block = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels, kernel_size=3, stride=1, padding=1, bias=False),
+        self.stride = stride
+        self.block = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, bias=False),
+                                   # PrintLayer(),
                                    nn.BatchNorm2d(self.out_channels),
-                                   nn.Conv2d(self.out_channels, self.out_channels, kernel_size=3, stride=1, padding=1, bias=False),
+                                   nn.Conv2d(self.out_channels, self.out_channels, kernel_size=3, stride=self.stride, padding=1, bias=False),
+                                   # PrintLayer(),
                                    nn.BatchNorm2d(self.out_channels),
-                                   nn.Conv2d(self.out_channels, self.out_channels, kernel_size=3, stride=1, padding=1, bias=False),
-                                   nn.BatchNorm2d(self.out_channels),
-                                   nn.LeakyReLU())
+                                   nn.Conv2d(self.out_channels, self.out_channels*self.expansion, kernel_size=1,  bias=False),
+                                   # PrintLayer(),
+                                   nn.BatchNorm2d(self.out_channels*self.expansion),
+                                  )
         
-        self.downsample = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, stride=1, bias=False),
-                                        nn.BatchNorm2d(self.out_channels))
+        self.downsample = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels*self.expansion, kernel_size=1, stride=self.stride, bias=False),
+                                        nn.BatchNorm2d(self.out_channels*self.expansion))
         
         self.block.apply(self.init_weight)
         self.downsample.apply(self.init_weight)
     
     def forward(self, x):
         residual = x
+        # print("Resblock: ", x.shape)
         y = self.block(x)
         if self.is_downsample:
             residual = self.downsample(x)
         y = y + residual
+        y = F.relu(y)
         return y
     
     def init_weight(self, layer):
         if type(layer) == nn.Conv2d:
             nn.init.xavier_uniform_(layer.weight)
 
+class PrintLayer(nn.Module):
+    def __init__(self):
+        super(PrintLayer, self).__init__()
+    
+    def forward(self, x):
+        print(x.shape)
+        return x
 
 class miniResnet(nn.Module):
-    def __init__(self, input_size=3, output_size=128, flat_shape=1000, num_classes=120):
+    def __init__(self, input_size=64, output_size=64, flat_shape=1000, num_classes=120):
         super(miniResnet, self).__init__()
         self.in_channels = input_size
         self.out_channels = output_size
         self.nclasses = num_classes
         self.flat_shape = flat_shape
-        self.conv_features = nn.Sequential(nn.Conv2d(self.in_channels, self.out_channels, kernel_size=7, bias=False),
-                                      nn.BatchNorm2d(self.out_channels),
-                                      nn.LeakyReLU(),
-                                      nn.MaxPool2d(3, stride=2),
-                                      resBlock(self.out_channels, self.out_channels),
-                                      resBlock(self.out_channels, self.out_channels),
-                                      resBlock(self.out_channels, self.out_channels),
+        self.conv_features = nn.Sequential(nn.Conv2d(3, self.in_channels, kernel_size=7, stride=2, padding=3, bias=False),
+                                      nn.BatchNorm2d(self.in_channels),
+                                      nn.ReLU(inplace=True),
+                                      nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+                                      resBlock(self.in_channels, self.out_channels, is_downsample=True),
+                                      resBlock(self.out_channels*4, self.out_channels),
+                                      resBlock(self.out_channels*4, self.out_channels),
                                     #   nn.MaxPool2d(2, stride=2),
-                                      resBlock(self.out_channels, self.out_channels//2, is_downsample=True),
-                                      resBlock(self.out_channels//2, self.out_channels//2),
-                                      resBlock(self.out_channels//2, self.out_channels//2),
-                                      nn.MaxPool2d(3, stride=2),
-                                      resBlock(self.out_channels//2, self.out_channels//4, is_downsample=True),
-                                      resBlock(self.out_channels//4, self.out_channels//4),
-                                      resBlock(self.out_channels//4, self.out_channels//4),
-                                      nn.AvgPool2d(7, stride=1))
+                                      resBlock(self.out_channels*4, self.out_channels*2, stride=2, is_downsample=True),
+                                      resBlock(self.out_channels*8, self.out_channels*2),
+                                      resBlock(self.out_channels*8, self.out_channels*2),
+                                      #nn.MaxPool2d(3, stride=2),
+                                      resBlock(self.out_channels*8, self.out_channels*4, stride=2, is_downsample=True),
+                                      resBlock(self.out_channels*16, self.out_channels*4),
+                                      resBlock(self.out_channels*16, self.out_channels*4),
+                                      nn.AdaptiveAvgPool2d((1, 1))
+                                    )   
 
         self.linear_features = nn.Sequential(nn.Linear(self.flat_shape, 512),
                                         nn.Dropout(),
@@ -150,7 +165,7 @@ def main():
 
     # create model
 
-    model = miniResnet(input_size=3, output_size=128, flat_shape=args.flat_shape, num_classes=120)
+    model = miniResnet(input_size=64, output_size=64, flat_shape=args.flat_shape, num_classes=120)
     # if torch.cuda.device_count() > 1:
     #     print("Using", torch.cuda.device_count(), "GPUs!")
     #     model = nn.DataParallel(model)
@@ -161,7 +176,7 @@ def main():
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
     # define transformations
 
-    resize = transforms.Resize((64, 64))
+    resize = transforms.Resize((256, 256))
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
     normal = transforms.Compose([resize, transforms.ToTensor(),

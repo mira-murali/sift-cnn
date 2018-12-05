@@ -1,0 +1,117 @@
+Training: 
+Epoch: [0][49/375]	Loss: 4.788	Accuracy: 0.011	Data time: 4.292	Batch Time: 4.360
+Epoch: [0][99/375]	Loss: 4.788	Accuracy: 0.010	Data time: 4.034	Batch Time: 4.102
+Epoch: [0][149/375]	Loss: 4.785	Accuracy: 0.011	Data time: 4.065	Batch Time: 4.133
+Epoch: [0][199/375]	Loss: 4.780	Accuracy: 0.013	Data time: 4.130	Batch Time: 4.199
+Epoch: [0][249/375]	Loss: 4.776	Accuracy: 0.014	Data time: 4.190	Batch Time: 4.259
+Epoch: [0][299/375]	Loss: 4.772	Accuracy: 0.014	Data time: 4.366	Batch Time: 4.435
+Epoch: [0][349/375]	Loss: 4.767	Accuracy: 0.016	Data time: 4.117	Batch Time: 4.186
+Training: 
+Epoch: [1][49/375]	Loss: 4.717	Accuracy: 0.027	Data time: 4.285	Batch Time: 4.354
+Epoch: [1][99/375]	Loss: 4.713	Accuracy: 0.028	Data time: 4.049	Batch Time: 4.119
+Epoch: [1][149/375]	Loss: 4.706	Accuracy: 0.029	Data time: 4.302	Batch Time: 4.371
+Epoch: [1][199/375]	Loss: 4.697	Accuracy: 0.033	Data time: 4.269	Batch Time: 4.337
+Epoch: [1][249/375]	Loss: 4.690	Accuracy: 0.035	Data time: 4.105	Batch Time: 4.174
+Epoch: [1][299/375]	Loss: 4.680	Accuracy: 0.039	Data time: 4.045	Batch Time: 4.114
+Epoch: [1][349/375]	Loss: 4.670	Accuracy: 0.041	Data time: 4.247	Batch Time: 4.315
+Training: 
+Epoch: [2][49/375]	Loss: 4.553	Accuracy: 0.074	Data time: 4.317	Batch Time: 4.386
+Epoch: [2][99/375]	Loss: 4.543	Accuracy: 0.073	Data time: 4.255	Batch Time: 4.324
+Epoch: [2][149/375]	Loss: 4.513	Accuracy: 0.084	Data time: 4.136	Batch Time: 4.205
+Epoch: [2][199/375]	Loss: 4.488	Accuracy: 0.087	Data time: 4.007	Batch Time: 4.076
+Epoch: [2][249/375]	Loss: 4.460	Accuracy: 0.091	Data time: 4.016	Batch Time: 4.085
+Epoch: [2][299/375]	Loss: 4.430	Accuracy: 0.095	Data time: 4.200	Batch Time: 4.269
+Epoch: [2][349/375]	Loss: 4.400	Accuracy: 0.098	Data time: 4.086	Batch Time: 4.155
+Testing: 
+Total Test Accuracy: 0.489Total Test Loss:3.910 
+Training: 
+Epoch: [3][49/375]	Loss: 4.040	Accuracy: 0.154	Data time: 4.200	Batch Time: 4.270
+Epoch: [3][99/375]	Loss: 3.987	Accuracy: 0.157	Data time: 4.314	Batch Time: 4.383
+Epoch: [3][149/375]	Loss: 3.944	Accuracy: 0.158	Data time: 4.012	Batch Time: 4.082
+Epoch: [3][199/375]	Loss: 3.891	Accuracy: 0.159	Data time: 4.199	Batch Time: 4.269
+Epoch: [3][249/375]	Loss: 3.825	Accuracy: 0.167	Data time: 4.181	Batch Time: 4.250
+Epoch: [3][299/375]	Loss: 3.767	Accuracy: 0.172	Data time: 4.246	Batch Time: 4.315
+Epoch: [3][349/375]	Loss: 3.701	Accuracy: 0.179	Data time: 4.134	Batch Time: 4.203
+Training: 
+Epoch: [4][49/375]	Loss: 3.125	Accuracy: 0.241	Data time: 4.334	Batch Time: 4.403
+Epoch: [4][99/375]	Loss: 3.091	Accuracy: 0.237	Data time: 3.989	Batch Time: 4.058
+Epoch: [4][149/375]	Loss: 3.037	Accuracy: 0.250	Data time: 4.079	Batch Time: 4.149
+Epoch: [4][199/375]	Loss: 2.985	Accuracy: 0.261	Data time: 4.075	Batch Time: 4.144
+Epoch: [4][249/375]	Loss: 2.938	Accuracy: 0.266	Data time: 4.154	Batch Time: 4.223
+Epoch: [4][299/375]	Loss: 2.884	Accuracy: 0.273	Data time: 4.204	Batch Time: 4.274
+Epoch: [4][349/375]	Loss: 2.839	Accuracy: 0.282	Data time: 4.123	Batch Time: 4.193
+Training: 
+Epoch: [5][49/375]	Loss: 2.405	Accuracy: 0.345	Data time: 4.144	Batch Time: 4.213
+Epoch: [5][99/375]	Loss: 2.392	Accuracy: 0.347	Data time: 4.253	Batch Time: 4.322
+Epoch: [5][149/375]	Loss: 2.357	Accuracy: 0.362	Data time: 4.077	Batch Time: 4.148
+Epoch: [5][199/375]	Loss: 2.329	Accuracy: 0.368	Data time: 4.262	Batch Time: 4.332
+Epoch: [5][249/375]	Loss: 2.306	Accuracy: 0.371	Data time: 4.081	Batch Time: 4.150
+Epoch: [5][299/375]	Loss: 2.274	Accuracy: 0.376	Data time: 4.338	Batch Time: 4.407
+Epoch: [5][349/375]	Loss: 2.254	Accuracy: 0.382	Data time: 4.280	Batch Time: 4.355
+Testing: 
+Total Test Accuracy: 0.724Total Test Loss:1.400 
+Training: 
+Epoch: [6][49/375]	Loss: 1.985	Accuracy: 0.444	Data time: 4.300	Batch Time: 4.369
+Epoch: [6][99/375]	Loss: 1.978	Accuracy: 0.444	Data time: 4.444	Batch Time: 4.520
+Epoch: [6][149/375]	Loss: 1.960	Accuracy: 0.448	Data time: 4.215	Batch Time: 4.284
+Epoch: [6][199/375]	Loss: 1.945	Accuracy: 0.450	Data time: 4.477	Batch Time: 4.546
+Epoch: [6][249/375]	Loss: 1.928	Accuracy: 0.451	Data time: 4.389	Batch Time: 4.458
+Epoch: [6][299/375]	Loss: 1.910	Accuracy: 0.454	Data time: 4.296	Batch Time: 4.365
+Epoch: [6][349/375]	Loss: 1.894	Accuracy: 0.454	Data time: 4.118	Batch Time: 4.187
+Training: 
+Epoch: [7][49/375]	Loss: 1.805	Accuracy: 0.477	Data time: 4.277	Batch Time: 4.346
+Epoch: [7][99/375]	Loss: 1.761	Accuracy: 0.493	Data time: 4.197	Batch Time: 4.266
+Epoch: [7][149/375]	Loss: 1.740	Accuracy: 0.495	Data time: 4.269	Batch Time: 4.338
+Epoch: [7][199/375]	Loss: 1.722	Accuracy: 0.501	Data time: 4.167	Batch Time: 4.235
+Epoch: [7][249/375]	Loss: 1.704	Accuracy: 0.505	Data time: 4.282	Batch Time: 4.351
+Epoch: [7][299/375]	Loss: 1.689	Accuracy: 0.509	Data time: 4.289	Batch Time: 4.359
+Epoch: [7][349/375]	Loss: 1.678	Accuracy: 0.511	Data time: 4.120	Batch Time: 4.190
+Training: 
+Epoch: [8][49/375]	Loss: 1.548	Accuracy: 0.555	Data time: 4.483	Batch Time: 4.552
+Epoch: [8][99/375]	Loss: 1.565	Accuracy: 0.546	Data time: 4.363	Batch Time: 4.432
+Epoch: [8][149/375]	Loss: 1.555	Accuracy: 0.542	Data time: 4.390	Batch Time: 4.459
+Epoch: [8][199/375]	Loss: 1.531	Accuracy: 0.550	Data time: 4.236	Batch Time: 4.306
+Epoch: [8][249/375]	Loss: 1.517	Accuracy: 0.553	Data time: 4.375	Batch Time: 4.446
+Epoch: [8][299/375]	Loss: 1.499	Accuracy: 0.555	Data time: 4.251	Batch Time: 4.326
+Epoch: [8][349/375]	Loss: 1.494	Accuracy: 0.557	Data time: 4.312	Batch Time: 4.384
+Testing: 
+Total Test Accuracy: 0.772Total Test Loss:0.886 
+Training: 
+Epoch: [9][49/375]	Loss: 1.403	Accuracy: 0.585	Data time: 4.515	Batch Time: 4.585
+Epoch: [9][99/375]	Loss: 1.420	Accuracy: 0.573	Data time: 4.009	Batch Time: 4.078
+Epoch: [9][149/375]	Loss: 1.428	Accuracy: 0.574	Data time: 4.237	Batch Time: 4.306
+Epoch: [9][199/375]	Loss: 1.437	Accuracy: 0.573	Data time: 4.126	Batch Time: 4.196
+Epoch: [9][249/375]	Loss: 1.433	Accuracy: 0.575	Data time: 4.364	Batch Time: 4.433
+Epoch: [9][299/375]	Loss: 1.422	Accuracy: 0.578	Data time: 4.114	Batch Time: 4.183
+Epoch: [9][349/375]	Loss: 1.419	Accuracy: 0.578	Data time: 4.112	Batch Time: 4.181
+Training: 
+Epoch: [10][49/375]	Loss: 1.300	Accuracy: 0.609	Data time: 4.355	Batch Time: 4.424
+Epoch: [10][99/375]	Loss: 1.314	Accuracy: 0.606	Data time: 4.306	Batch Time: 4.375
+Epoch: [10][149/375]	Loss: 1.318	Accuracy: 0.603	Data time: 4.192	Batch Time: 4.262
+Epoch: [10][199/375]	Loss: 1.325	Accuracy: 0.603	Data time: 4.286	Batch Time: 4.355
+Epoch: [10][249/375]	Loss: 1.323	Accuracy: 0.603	Data time: 4.186	Batch Time: 4.255
+Epoch: [10][299/375]	Loss: 1.319	Accuracy: 0.601	Data time: 4.029	Batch Time: 4.098
+Epoch: [10][349/375]	Loss: 1.311	Accuracy: 0.606	Data time: 4.128	Batch Time: 4.197
+Training: 
+Epoch: [11][49/375]	Loss: 1.248	Accuracy: 0.598	Data time: 4.407	Batch Time: 4.476
+Epoch: [11][99/375]	Loss: 1.269	Accuracy: 0.606	Data time: 4.168	Batch Time: 4.237
+Epoch: [11][149/375]	Loss: 1.251	Accuracy: 0.614	Data time: 4.217	Batch Time: 4.286
+Epoch: [11][199/375]	Loss: 1.246	Accuracy: 0.623	Data time: 4.095	Batch Time: 4.164
+Epoch: [11][249/375]	Loss: 1.243	Accuracy: 0.627	Data time: 4.110	Batch Time: 4.180
+Epoch: [11][299/375]	Loss: 1.247	Accuracy: 0.624	Data time: 4.279	Batch Time: 4.349
+Epoch: [11][349/375]	Loss: 1.249	Accuracy: 0.623	Data time: 4.073	Batch Time: 4.142
+Testing: 
+Total Test Accuracy: 0.784Total Test Loss:0.778 
+Training: 
+Epoch: [12][49/375]	Loss: 1.209	Accuracy: 0.634	Data time: 4.492	Batch Time: 4.561
+Epoch: [12][99/375]	Loss: 1.233	Accuracy: 0.632	Data time: 4.242	Batch Time: 4.311
+Epoch: [12][149/375]	Loss: 1.209	Accuracy: 0.636	Data time: 4.041	Batch Time: 4.110
+Epoch: [12][199/375]	Loss: 1.214	Accuracy: 0.636	Data time: 4.204	Batch Time: 4.273
+Epoch: [12][249/375]	Loss: 1.214	Accuracy: 0.636	Data time: 4.180	Batch Time: 4.249
+Epoch: [12][299/375]	Loss: 1.214	Accuracy: 0.636	Data time: 4.066	Batch Time: 4.136
+Epoch: [12][349/375]	Loss: 1.214	Accuracy: 0.636	Data time: 4.192	Batch Time: 4.261
+Training: 
+Epoch: [13][49/375]	Loss: 1.153	Accuracy: 0.645	Data time: 4.376	Batch Time: 4.446
+Epoch: [13][99/375]	Loss: 1.158	Accuracy: 0.640	Data time: 3.981	Batch Time: 4.050
+Epoch: [13][149/375]	Loss: 1.164	Accuracy: 0.640	Data time: 4.267	Batch Time: 4.337
+Epoch: [13][199/375]	Loss: 1.171	Accuracy: 0.640	Data time: 4.192	Batch Time: 4.261
