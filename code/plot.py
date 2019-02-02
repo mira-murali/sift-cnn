@@ -1,0 +1,38 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+init_train_acc = np.load('cifar_data_aug/train_acc.npy')
+init_train_loss = np.load('cifar_data_aug/train_loss.npy')
+init_test_acc = np.load('cifar_data_aug/val_acc.npy')
+init_test_loss = np.load('cifar_data_aug/val_loss.npy')
+
+concat_train_acc = np.load('cifar_data_aug/concat_train_acc.npy')
+concat_train_loss = np.load('cifar_data_aug/concat_train_loss.npy')
+concat_test_acc = np.load('cifar_data_aug/concat_val_acc.npy')
+concat_test_loss = np.load('cifar_data_aug/concat_val_loss.npy')
+
+plt.figure(1)
+# plt.hold(True)
+plt.plot(init_train_acc, 'b--', label='CNN Train Acc')
+plt.plot(init_test_acc, 'b-', label='CNN Validation Acc')
+plt.plot(concat_train_acc, 'r--', label='CNN + SIFT Train Acc')
+plt.plot(concat_test_acc, 'r-', label='CNN + SIFT Validation Acc')
+plt.title('Accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epochs')
+plt.legend()
+plt.savefig('cifar_data_aug/accuracy_plot_1')
+plt.show()
+
+plt.figure(2)
+# plt.hold(True)
+plt.plot(init_train_loss, 'b--', label='CNN Train Loss')
+plt.plot(init_test_loss, 'b-', label='CNN Validation Loss')
+plt.plot(concat_train_loss, 'r--', label='CNN + SIFT Train Loss')
+plt.plot(concat_test_loss, 'r-', label='CNN + SIFT Validation Loss')
+plt.title('Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epochs')
+plt.legend()
+plt.savefig('cifar_data_aug/loss_plot_1')
+plt.show()

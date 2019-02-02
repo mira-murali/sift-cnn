@@ -27,6 +27,7 @@ parser.add_argument('--load-folder', default='', type=str, help='Path to load sa
 parser.add_argument('--foldername', default='test_run', type=str, help='Folder name (will be created if it does not exist) to store model, plots, etc.')
 parser.add_argument('--print-freq', default=50, type=int, help='how often to print model performance per epoch (in terms of iterations)')
 parser.add_argument('--flat-shape', default=15488, type=int, help='Flattened vector dimension')
+parser.add_argument('--freezeConv', default=1, type=int, help='set to 0 when training convolutional layers')
 args = parser.parse_args()
 
 
@@ -167,15 +168,12 @@ class ResNet(nn.Module):
         self.conv_features = nn.Sequential(*list(orig_model.children())[:-1])
         self.nclasses = num_classes
         self.flat_shape = flat_shape
-        self.linear_features = nn.Sequential(nn.Linear(self.flat_shape, 512),
+        self.linear_features = nn.Sequential(nn.Linear(self.flat_shape, 192),
                                         nn.Dropout(),
-                                        nn.LeakyReLU(), 
+                                        nn.ReLU(), 
                                         )
         
-        self.classifier = nn.Sequential(nn.Linear(512, 256),
-                                        nn.LeakyReLU(),
-                                        nn.Dropout(),
-                                        nn.Linear(256, self.nclasses))
+        self.classifier = nn.Sequential(nn.Linear(192, self.nclasses))
     
     
     def forward(self, x):
@@ -196,17 +194,21 @@ def main():
     #     print("Using", torch.cuda.device_count(), "GPUs!")
     #     model = nn.DataParallel(model)
     model.to(device)
-    child_counter = 0
-    for child in model.children():
-        if child_counter == 0:
-            for param in child.parameters():
-                param.requires_grad = False
-        
-        child_counter += 1
+    if args.freezeConv:
+        child_counter = 0
+        for child in model.children():
+            if child_counter == 0:
+                for param in child.parameters():
+                    param.requires_grad = False
+            child_counter += 1
+    else:
+        fc_checkpoint = torch.load(os.path.join(args.load_folder, 'baseline.pth.tar'))
+        model.load_state_dict(fc_checkpoint['state_dict'])
+            
     # define criterion and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, momentum=0.9, weight_decay = 1e-5)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.8)
     # define transformations
 
     resize = transforms.Resize((224, 224))
@@ -231,6 +233,10 @@ def main():
 
     #
     # train model
+    total_train_loss = []
+    total_test_loss = []
+    total_train_acc = []
+    total_test_acc = []
     best_acc = 0
     for epoch in range(args.epochs):
         if not args.eval:
@@ -238,19 +244,23 @@ def main():
                 checkpoint = torch.load(os.path.join(os.environ['CURRENT'], args.load_folder))
                 model.load_state_dict(checkpoint['state_dict'])
             loss, acc = train(model, criterion, optimizer, train_loader, epoch)
+            total_train_acc.append(acc)
+            total_train_loss.append(loss)
             if acc > best_acc:
                 best_acc = acc
                 checkpoint = {'state_dict': model.state_dict()}
                 torch.save(checkpoint, os.path.join(current_folder, 'baseline.pth.tar'))
-        if (epoch+1)%3==0:
+        # if (epoch+1)%3==0:
             # checkpoint = torch.load(os.path.join(current_folder, 'baseline.pth.tar'))
             # model.load_state_dict(checkpoint['state_dict'])
-            test_loss, test_acc = test(model, criterion, test_loader)
-            print('Total Test Accuracy: {:.3f}'.format(test_acc))
-            print('Total Test Loss:{:.3f} '.format(test_loss))
-            outfile.write('Total Test Accuracy: {:.3f}'.format(test_acc))
-            outfile.write('Total Test Loss:{:.3f} '.format(test_loss))
-            outfile.write('\n')
+        test_loss, test_acc = test(model, criterion, test_loader)
+        total_test_loss.append(test_loss)
+        total_test_acc.append(test_acc)
+        print('Total Test Accuracy: {:.3f}'.format(test_acc))
+        print('Total Test Loss:{:.3f} '.format(test_loss))
+        outfile.write('Total Test Accuracy: {:.3f}'.format(test_acc))
+        outfile.write('Total Test Loss:{:.3f} '.format(test_loss))
+        outfile.write('\n')
         scheduler.step()
 
     checkpoint = torch.load(os.path.join(current_folder, 'baseline.pth.tar'))
@@ -261,6 +271,10 @@ def main():
     outfile.write('Total Test Accuracy: {:.3f}'.format(test_acc))
     outfile.write('Total Test Loss:{:.3f} '.format(test_loss))
     outfile.write('\n')
+    np.save(os.path.join(current_folder, 'train_loss.npy'), np.asarray(total_train_loss))
+    np.save(os.path.join(current_folder, 'train_acc.npy'), np.asarray(total_train_acc))
+    np.save(os.path.join(current_folder, 'test_loss.npy'), np.asarray(total_test_loss))
+    np.save(os.path.join(current_folder, 'test_acc.npy'), np.asarray(total_test_acc))
 
 def train(model, criterion, optimizer, train_loader, epoch):
     model.train()
